@@ -1,0 +1,238 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eyes ❤️ Heart</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #030506;
+    color: white;
+    font-family: Consolas, monospace;
+    overflow: hidden;
+}
+
+canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100vh;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    font-size: clamp(16px, 4vw, 25px);
+    letter-spacing: 8px;
+    color: #e5f9ef;
+    text-shadow: 0 0 15px #35ff9a;
+    margin-bottom: 45px;
+}
+
+.eyes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(20px, 8vw, 90px);
+    width: 100%;
+}
+
+.eye {
+    width: clamp(100px, 27vw, 180px);
+    height: clamp(65px, 17vw, 110px);
+    border: 3px solid #f3c9c2;
+    border-radius: 80% 20% 70% 30% / 65% 40% 60% 35%;
+    transform: rotate(-8deg);
+    background: #fff0e8;
+    box-shadow: 0 0 18px #ff426c55;
+    position: relative;
+    overflow: hidden;
+    animation: blink 5s infinite;
+}
+
+.eye.right {
+    transform: scaleX(-1) rotate(-8deg);
+    animation-delay: .15s;
+}
+
+.iris {
+    position: absolute;
+    width: 43%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, #08080d 0 24%, #a82043 28% 55%, #f35b80 58% 70%, #3b1022 73%);
+    left: 28%;
+    top: 23%;
+    box-shadow: 0 0 16px #ff275d;
+}
+
+.iris::after {
+    content: "";
+    position: absolute;
+    width: 19%;
+    aspect-ratio: 1;
+    background: white;
+    border-radius: 50%;
+    top: 17%;
+    left: 20%;
+    box-shadow: 0 0 8px white;
+}
+
+@keyframes blink {
+    0%, 8%, 12%, 48%, 52%, 100% {
+        clip-path: inset(0 0 0 0);
+    }
+    10%, 50% {
+        clip-path: inset(48% 0 48% 0);
+    }
+}
+
+.heart {
+    font-size: clamp(75px, 18vw, 130px);
+    margin-top: 35px;
+    filter: drop-shadow(0 0 15px #ff174f);
+    animation: heartbeat 1s infinite;
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    15% { transform: scale(1.18); }
+    30% { transform: scale(1); }
+    45% { transform: scale(1.12); }
+    60% { transform: scale(1); }
+}
+
+.subtitle {
+    margin-top: 35px;
+    color: #ff7297;
+    letter-spacing: 4px;
+    font-size: clamp(10px, 2.5vw, 14px);
+    text-align: center;
+    text-shadow: 0 0 10px #ff174f;
+}
+
+button {
+    margin-top: 25px;
+    background: transparent;
+    color: #79ffc0;
+    border: 1px solid #35ff9a;
+    border-radius: 25px;
+    padding: 12px 24px;
+    font: inherit;
+    cursor: pointer;
+    box-shadow: 0 0 12px #35ff9a22;
+}
+
+button:hover {
+    background: #35ff9a18;
+}
+
+body.love .heart {
+    animation-duration: .55s;
+    filter: drop-shadow(0 0 28px #ff174f);
+}
+
+body.love .eye {
+    box-shadow: 0 0 30px #ff426c99;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="matrix"></canvas>
+
+<main class="content">
+    <h1>LOOK INTO MY EYES</h1>
+
+    <div class="eyes">
+        <div class="eye">
+            <div class="iris"></div>
+        </div>
+        <div class="eye right">
+            <div class="iris"></div>
+        </div>
+    </div>
+
+    <div class="heart">❤️</div>
+
+    <div class="subtitle">YOU ARE SPECIAL ♡</div>
+
+    <button id="loveButton">CLICK MY HEART ♥</button>
+</main>
+
+<script>
+const canvas = document.getElementById("matrix");
+const ctx = canvas.getContext("2d");
+
+const chars = "01アイウエオカキクケコ<>/{}[]#$%&*";
+const fontSize = 15;
+let columns = [];
+let drops = [];
+
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const count = Math.ceil(canvas.width / fontSize);
+    columns = count;
+    drops = Array.from(
+        { length: count },
+        () => Math.random() * -canvas.height / fontSize
+    );
+}
+
+function drawMatrix() {
+    ctx.fillStyle = "rgba(3, 5, 6, 0.12)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.font = fontSize + "px Consolas, monospace";
+
+    for (let i = 0; i < columns; i++) {
+        const char = chars[Math.floor(Math.random() * chars.length)];
+        const x = i * fontSize;
+        const y = drops[i] * fontSize;
+
+        ctx.fillStyle = Math.random() > 0.96 ? "#ff456c" : "#27b879";
+        ctx.fillText(char, x, y);
+
+        if (y > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+        }
+
+        drops[i] += 0.55 + Math.random() * 0.6;
+    }
+
+    requestAnimationFrame(drawMatrix);
+}
+
+window.addEventListener("resize", resize);
+
+document.getElementById("loveButton").addEventListener("click", () => {
+    document.body.classList.toggle("love");
+});
+
+resize();
+drawMatrix();
+</script>
+
+</body>
+</html>
